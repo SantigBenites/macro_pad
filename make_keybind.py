@@ -71,7 +71,7 @@ with open(f"{CURRENT_DIR}/keybinds") as keybinds_file:
 
         key_value = output.stderr
 
-        
+        print("Introduce command to use or leave blank and edit file keybinds\n")
             
             
     except KeyboardInterrupt:
