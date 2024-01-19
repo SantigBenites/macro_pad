@@ -9,7 +9,7 @@ dev.grab()
 if os.path.exists(f"{CURRENTDIR}/keybinds"):
     with open(f'{CURRENTDIR}/keybinds', 'r') as fp: 
         key_bind_map = {}
-        
+        for x in 
 else:
     analysedFiles = {}
 
