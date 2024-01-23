@@ -2,16 +2,27 @@ import os, pickle
 from evdev import InputDevice, categorize, ecodes
 CURRENTDIR = os.getcwd()
 
-# Keyboards to ignore .... all present in map 
-dev = InputDevice('/dev/input/event0')
-dev.grab()
 
 if os.path.exists(f"{CURRENTDIR}/keybinds"):
     with open(f'{CURRENTDIR}/keybinds', 'r') as fp: 
         key_bind_map = {}
-        key_bind_entries = [line.rstrip() for line in fp]
+        key_bind_entries = [line.rstrip().split(":") for line in fp]
+
+        for entry in key_bind_entries:
+            event, key, command = entry[0], entry[1], entry[2]
+
+            if event not in key_bind_map.keys():
+                key_bind_map[event] = {}
+                
+            key_bind_map[event][key] = command
 else:
-    analysedFiles = {}
+    key_bind_map = {}
+
+# Keyboards to ignore .... all present in map 
+device_list = []
+for event_value in list(key_bind_map.keys()):
+    dev = InputDevice('/dev/input/event0')
+x = [dev.grab() for dev in device_list]
 
 for event in dev.read_loop():
     
@@ -22,5 +33,4 @@ for event in dev.read_loop():
     # Execute commands
 
     # else ignore
-
 
