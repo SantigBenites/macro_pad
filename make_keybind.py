@@ -1,4 +1,11 @@
-import subprocess, re, os, sys, signal
+import subprocess, re, os, sys, signal, evdev
+#https://python-evdev.readthedocs.io/en/latest/
+from evdev import InputDevice, categorize, ecodes
+from utils import *
+#https://pypi.org/project/sty/
+from sty import fg, bg, ef, rs
+
+from termios import tcflush, TCIFLUSH
 
 # xinput list
 available_devices = subprocess.run("xinput list", 
@@ -55,27 +62,44 @@ print(f"Device event stream is {event_value}")
 
 CURRENT_DIR = os.getcwd() 
 
-with open(f"{CURRENT_DIR}/keybinds") as keybinds_file:
+with open(f"{CURRENT_DIR}/keybinds","a") as keybinds_file:
     try:
         # sudo actkbd -s -d /dev/input/[event]
         print("Press key to rebound \n")
         
         # cat /proc/bus/input/devices
 
-        output = subprocess.run(f"sudo actkbd -s -d /dev/input/{event_value}",
-                                    #stdout=subprocess.PIPE, 
-                                    shell=True, 
-                                    check=True,
-                                    capture_output = True, 
-                                    text = True )
+        device = evdev.InputDevice(f'/dev/input/{event_value}')
+        device.grab()
+        key_code = "null"
 
-        key_value = output.stderr
+        for event in device.read_loop():
+            if event.type == ecodes.EV_KEY:
+                key = categorize(event)
+                if key.keystate == key.key_down:
+                    key_code = key.keycode
+                    device.close()
+                    break
 
         print("Introduce command to use or leave blank and edit file keybinds\n")
-            
+        
+        # Clearing the input buffer in the keyboard
+        tcflush(sys.stdin, TCIFLUSH)
+        command_for_selected_key = input()
+        
+        colored_event = fg.red + event_value + fg.rs
+        colored_key_code = fg.red + key_code + fg.rs
+        colored_command = fg.red + command_for_selected_key + fg.rs
+        
+        print(f"event is {colored_event} key is {colored_key_code} command is {colored_command}")
+        
+        print("Write yes to add keybind")
+        
+        if input().strip() == "yes":
+            keybinds_file.write(f"{event_value}:{key_code}:{command_for_selected_key}\n")
             
     except KeyboardInterrupt:
-        process.send_signal(signal.SIGINT)
+        
         print("Finished binding")
         keybinds_file.close()
         sys.exit(0)
