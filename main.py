@@ -16,9 +16,10 @@ else:
 
 device_list = []
 with open(f"{CURRENT_DIR}/listening_device","r") as listening_device_file:
-    listening_device = listening_device_file.readline().strip()
-    print(f"Listening from device {listening_device}")
-    device = InputDevice(f'/dev/input/{listening_device}')
+    listening_device_string = listening_device_file.readline().strip().split(":")
+    device_disable, event_value = listening_device_string[0], listening_device_string[1]
+    print(f"Listening from device {event_value}")
+    device = InputDevice(f'/dev/input/{event_value}')
 device.grab()
 
 for event in device.read_loop():

@@ -1,0 +1,14 @@
+[Unit]
+Description=DYI Macro Keyboard
+
+[Service]
+User=deck
+Group=deck
+Type=simple
+Restart=on-failure
+RestartSec=5s
+
+ExecStart=sudo /usr/bin/python3 /opt/deck/deck.py
+
+[Install]
+WantedBy=multi-user.target

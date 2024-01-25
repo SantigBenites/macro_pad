@@ -41,7 +41,7 @@ if device_to_disable_index not in available_indexes:
     exit(1)
 
 # xinput --disable [id]
-#subprocess.run(f"xinput --disable {device_to_disable_index}", shell=True, check=True)
+subprocess.run(f"xinput --disable {device_to_disable_index}", shell=True, check=True)
 
 print(f"Disabled device with index {device_to_disable_index} \n")
 
@@ -94,12 +94,12 @@ with open(f"{CURRENT_DIR}/keybinds","a") as keybinds_file:
         print(f"event is {colored_event} key is {colored_key_code} command is {colored_command}")
         
         with open(f"{CURRENT_DIR}/listening_device","r+") as listening_device:
-            prev_listening_device = listening_device.readline() 
-            if prev_listening_device != event_value:
-                print(f"Previosly read is {prev_listening_device} and new device is {event}")
+            prev_listening_device = listening_device.readline().strip()
+            if prev_listening_device != f"{device_to_disable_index}:{event_value}":
+                print(f"Previosly read is {prev_listening_device} \nnew device is {device_to_disable_index}:{event_value}")
                 print("Write yes to switch event device")
                 if input().strip() == "yes":
-                    listening_device.write(event_value)
+                    listening_device.write(f"{device_to_disable_index}:{event_value}")
                 
         
         print("Write yes to add keybind")
