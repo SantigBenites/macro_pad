@@ -1,6 +1,6 @@
 import os, pickle
 from evdev import InputDevice, categorize, ecodes
-CURRENT_DIR = os.getcwd()
+CURRENT_DIR = "/opt/deck"
 
 
 if os.path.exists(f"{CURRENT_DIR}/keybinds"):
@@ -29,6 +29,8 @@ for event in device.read_loop():
         if key.keystate == key.key_down:
             print("Event captured")
             key_code = key.keycode
-            key_command = key_bind_map[key_code]
-            os.system(key_command)
+            if key_code in key_bind_map.keys():
+                key_command = key_bind_map[key_code]
+                os.system("export DISPLAY=:0")
+                os.system(key_command)
 
