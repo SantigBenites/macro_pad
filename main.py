@@ -1,36 +1,33 @@
 import os, pickle
 from evdev import InputDevice, categorize, ecodes
-CURRENTDIR = os.getcwd()
+CURRENT_DIR = os.getcwd()
 
 
-if os.path.exists(f"{CURRENTDIR}/keybinds"):
-    with open(f'{CURRENTDIR}/keybinds', 'r') as fp: 
+if os.path.exists(f"{CURRENT_DIR}/keybinds"):
+    with open(f'{CURRENT_DIR}/keybinds', 'r') as fp: 
         key_bind_map = {}
         key_bind_entries = [line.rstrip().split(":") for line in fp]
 
         for entry in key_bind_entries:
-            event, key, command = entry[0], entry[1], entry[2]
-
-            if event not in key_bind_map.keys():
-                key_bind_map[event] = {}
-                
-            key_bind_map[event][key] = command
+            key, command = entry[0], entry[1]                
+            key_bind_map[key] = command
 else:
     key_bind_map = {}
 
-# Keyboards to ignore .... all present in map 
 device_list = []
-for event_value in list(key_bind_map.keys()):
-    dev = InputDevice('/dev/input/event0')
-x = [dev.grab() for dev in device_list]
+with open(f"{CURRENT_DIR}/listening_device","r") as listening_device_file:
+    listening_device = listening_device_file.readline().strip()
+    print(f"Listening from device {listening_device}")
+    device = InputDevice(f'/dev/input/{listening_device}')
+device.grab()
 
-for event in dev.read_loop():
+for event in device.read_loop():
     
-    # if key in map
-    
-    # Get from map[key] = key_value and commands
-
-    # Execute commands
-
-    # else ignore
+    if event.type == ecodes.EV_KEY:
+        key = categorize(event)
+        if key.keystate == key.key_down:
+            print("Event captured")
+            key_code = key.keycode
+            key_command = key_bind_map[key_code]
+            os.system(key_command)
 

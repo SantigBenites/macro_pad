@@ -7,6 +7,8 @@ from sty import fg, bg, ef, rs
 
 from termios import tcflush, TCIFLUSH
 
+CURRENT_DIR = os.getcwd() 
+
 # xinput list
 available_devices = subprocess.run("xinput list", 
                                     shell=True, 
@@ -60,8 +62,6 @@ event_value = re.findall('event[0-9]*', device_string)[0]
 
 print(f"Device event stream is {event_value}")
 
-CURRENT_DIR = os.getcwd() 
-
 with open(f"{CURRENT_DIR}/keybinds","a") as keybinds_file:
     try:
         # sudo actkbd -s -d /dev/input/[event]
@@ -93,10 +93,19 @@ with open(f"{CURRENT_DIR}/keybinds","a") as keybinds_file:
         
         print(f"event is {colored_event} key is {colored_key_code} command is {colored_command}")
         
+        with open(f"{CURRENT_DIR}/listening_device","r+") as listening_device:
+            prev_listening_device = listening_device.readline() 
+            if prev_listening_device != event_value:
+                print(f"Previosly read is {prev_listening_device} and new device is {event}")
+                print("Write yes to switch event device")
+                if input().strip() == "yes":
+                    listening_device.write(event_value)
+                
+        
         print("Write yes to add keybind")
         
         if input().strip() == "yes":
-            keybinds_file.write(f"{event_value}:{key_code}:{command_for_selected_key}\n")
+            keybinds_file.write(f"{key_code}:{command_for_selected_key}\n")
             
     except KeyboardInterrupt:
         
