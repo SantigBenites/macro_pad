@@ -7,6 +7,9 @@ Group=sbenites
 Type=simple
 Restart=on-failure
 RestartSec=5s
+Environment=DISPLAY=:0
+EnvironmentFile=/opt/deck/enviroment
+
 
 ExecStart=/usr/bin/python3 /opt/deck/main.py
 

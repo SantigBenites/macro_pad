@@ -14,6 +14,7 @@ fi
 sudo cp ./main.py /opt/deck/main.py
 sudo cp ./keybinds /opt/deck/keybinds
 sudo cp ./listening_device /opt/deck/listening_device
+sudo cp ./enviroment /opt/deck/enviroment
 
 sudo cp ./deck.service /etc/systemd/system/deck.service
 

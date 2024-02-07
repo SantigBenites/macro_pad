@@ -1,4 +1,4 @@
-import os, pickle
+import os, pickle, subprocess
 from evdev import InputDevice, categorize, ecodes
 CURRENT_DIR = "/opt/deck"
 
@@ -31,6 +31,5 @@ for event in device.read_loop():
             key_code = key.keycode
             if key_code in key_bind_map.keys():
                 key_command = key_bind_map[key_code]
-                os.system("export DISPLAY=:0")
-                os.system(key_command)
+                subprocess.run(key_command,shell=True,check=True)
 
