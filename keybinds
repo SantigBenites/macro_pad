@@ -1,2 +1,3 @@
-KEY_L:firefox -private-window
+KEY_X:firefox -private-window
 KEY_C:code
+KEY_Z:konsole -e "micro"
