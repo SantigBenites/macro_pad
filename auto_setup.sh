@@ -1,15 +1,12 @@
 #!/bin/bash
 
+DIRECTORY=/opt/deck
 
-id deck >> /dev/null
-
-if [ $? != 0 ]; then
-    echo "No service account found"
-    sudo adduser --system --home /opt/deck --shell /bin/false --disabled-login --disabled-password --group deck
-    sudo usermod -a -G deck $USER
-    sudo usermod -a -G input deck
+if [ ! -d "$DIRECTORY" ]; then
+    sudo mkdir /opt/deck
 fi
 
+env > enviroment
 
 sudo cp ./main.py /opt/deck/main.py
 sudo cp ./keybinds /opt/deck/keybinds
